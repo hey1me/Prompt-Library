@@ -138,9 +138,15 @@ def get(ctx, prompt_id: str) -> None:
 
 @cli.command()
 @click.argument("prompt_id")
+@click.option("--var", "-v", "cli_vars", multiple=True,
+              help="Set a variable value as key=value (can be used multiple times).")
 @click.pass_context
-def render(ctx, prompt_id: str) -> None:
-    """Render a prompt with interactive variable substitution."""
+def render(ctx, prompt_id: str, cli_vars: tuple[str, ...]) -> None:
+    """Render a prompt with variable substitution.
+
+    Pass variables via ``--var key=value`` (repeatable), or leave them
+    unspecified to enter values interactively.
+    """
     _ensure_db(ctx)
     prompt = get_prompt(prompt_id)
 
@@ -148,11 +154,20 @@ def render(ctx, prompt_id: str) -> None:
         click.echo(f"Error: no prompt with ID '{prompt_id}'")
         return
 
+    # Parse --var key=value pairs
+    values: dict[str, str] = {}
+    for entry in cli_vars:
+        if "=" in entry:
+            key, _, val = entry.partition("=")
+            values[key.strip()] = val.strip()
+        else:
+            click.echo(f"Warning: ignoring '--var {entry}' (expected key=value format)")
+
     click.echo(f"Rendering: {prompt.title}")
     click.echo(f"ID: {prompt.id}")
     click.echo(f"{'=' * 50}")
 
-    result = render_prompt(prompt.body, prompt.variables)
+    result = render_prompt(prompt.body, prompt.variables, values=values or None)
 
     click.echo(f"\n{'=' * 50}")
     click.echo("RENDERED PROMPT:")
@@ -199,7 +214,7 @@ def categories(ctx) -> None:
 
 # ── New Commands ───────────────────────────────────────────────────────────
 
-@cli.command()
+@cli.command(name="import")
 @click.option("--dir", "directory", type=click.Path(exists=True, file_okay=False),
               default=None, help="Directory containing YAML prompt files (default: prompts/).")
 @click.pass_context
@@ -216,7 +231,7 @@ def import_cmd(ctx, directory: str) -> None:
     click.echo(f"Imported {count} prompt(s) from YAML files.")
 
 
-@cli.command()
+@cli.command(name="export")
 @click.option("--dir", "directory", type=click.Path(file_okay=False),
               default="./export", help="Output directory (default: ./export).")
 @click.pass_context

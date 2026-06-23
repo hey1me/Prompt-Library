@@ -89,14 +89,15 @@ def _storage_search(
         pass
 
     sql = """
-        SELECT p.*
+        SELECT p.*,
+               bm25(prompts_fts, 0, 1, 2, 3)
+               + (log10(CAST(COALESCE(p.fetch_count, 0) AS REAL) + 1) * COALESCE(p.user_rating, 0.0))
+               AS combined
         FROM prompts p
         JOIN prompts_fts ON p.rowid = prompts_fts.rowid
         WHERE prompts_fts MATCH ?
           AND (? = '' OR p.category = ?)
-        ORDER BY
-            bm25(prompts_fts, 0, 1.0, 1.0, 1.0)
-            + (log10(CAST(COALESCE(p.fetch_count, 0) AS REAL) + 1) * COALESCE(p.user_rating, 0.0))
+        ORDER BY combined DESC
         LIMIT 20
     """
     try:

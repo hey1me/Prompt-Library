@@ -6,10 +6,8 @@ table with an FTS5 virtual table for search.
 """
 
 import json
-import math
 import os
 import re
-import shutil
 from datetime import date
 from pathlib import Path
 from typing import Any, Optional
@@ -20,6 +18,7 @@ from pl.database import get_connection, init_db as _init_db_schema
 from pl.ledger import append as ledger_append, is_enabled as ledger_enabled
 from pl.migrations import run_migrations
 from pl.models import Prompt, Variable
+from pl.search import search_prompts as _fts_search
 
 FRONTMATTER_PATTERN = re.compile(r"^---\s*$", re.MULTILINE)
 
@@ -283,9 +282,12 @@ def search(
 ) -> list[Prompt]:
     """Full-text search using FTS5 with BM25 + usage-based ranking.
 
-    The compound scoring formula::
+    Delegates to the unified FTS5 search engine in ``pl.search``, which
+    implements a three-tier fallback chain::
 
-        Final Rank = BM25_text_score + (log10(fetch_count + 1) * user_rating)
+        1. FTS5 AND query with BM25 + usage scoring
+        2. Prefix wildcard (term*) OR fallback
+        3. LIKE scan on title (last resort)
 
     Args:
         query: The search query string.
@@ -296,35 +298,7 @@ def search(
     Returns:
         A list of Prompt objects ranked by relevance.
     """
-    conn = _get_conn(connection)
-
-    # Build FTS5 MATCH query: split terms, join with AND
-    terms = query.strip().lower().split()
-    fts_query = " AND ".join(terms) if terms else query
-
-    sql = """
-        SELECT p.*,
-               bm25(prompts_fts, 0, 1, 2, 3) AS text_score,
-               (log10(max(p.fetch_count, 0) + 1) * max(p.user_rating, 0.0)) AS usage_weight
-        FROM prompts p
-        JOIN prompts_fts ON p.rowid = prompts_fts.rowid
-        WHERE prompts_fts MATCH ?
-          AND (? = '' OR p.category = ?)
-        ORDER BY text_score + usage_weight DESC
-        LIMIT ?
-    """
-
-    try:
-        rows = conn.execute(sql, (fts_query, category, category, limit)).fetchall()
-    except Exception:
-        # Fallback: try with prefix wildcards
-        fts_fallback = " OR ".join(f"{t}*" for t in terms) if terms else query + "*"
-        try:
-            rows = conn.execute(sql, (fts_fallback, category, category, limit)).fetchall()
-        except Exception:
-            rows = []
-
-    return [_prompt_from_row(r) for r in rows]
+    return _fts_search(query, category=category, connection=connection)[:limit]
 
 
 def import_yaml(
