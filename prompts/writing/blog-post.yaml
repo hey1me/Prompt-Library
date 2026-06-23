@@ -1,0 +1,30 @@
+id: blog-post
+title: Blog Post Generator
+description: Generate a well-structured blog post outline and draft
+category: writing
+tags: [blog, writing, content, outline]
+model_hint: claude, gpt4
+variables:
+  - name: topic
+    description: The main topic of the blog post
+  - name: audience
+    description: Target audience
+    default: technical professionals
+  - name: tone
+    description: Writing tone
+    default: professional
+version: "1.0"
+created: 2026-06-18
+updated: 2026-06-18
+---
+Write a blog post about {{topic}} for {{audience}}.
+
+Tone: {{tone}}
+
+Structure the post with:
+1. An engaging title and hook
+2. Background context (why this matters)
+3. Main content with clear sections
+4. Practical examples or code snippets
+5. Key takeaways
+6. Call to action

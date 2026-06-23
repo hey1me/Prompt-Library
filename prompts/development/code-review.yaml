@@ -1,0 +1,26 @@
+id: code-review
+title: Code Review Checklist
+description: Systematic code review prompt with security and performance checks
+category: development
+tags: [review, code-quality, best-practices]
+model_hint: claude, gpt4
+variables:
+  - name: language
+    description: Programming language to review
+    default: python
+  - name: code_snippet
+    description: The code to review
+version: "1.0"
+created: 2026-06-18
+updated: 2026-06-18
+---
+Review the following {{language}} code for issues:
+
+{{code_snippet}}
+
+Check for:
+1. Correctness — logic errors, edge cases, off-by-one errors
+2. Security — injection vulnerabilities, authentication, data handling
+3. Performance — algorithmic complexity, unnecessary allocations
+4. Style — consistency with {{language}} idioms and conventions
+5. Maintainability — clarity, documentation, testability

@@ -1,0 +1,33 @@
+id: swot-analysis
+title: SWOT Analysis Framework
+description: Strategic SWOT analysis for products and initiatives
+category: analysis
+tags: [strategy, swot, analysis, planning]
+model_hint: claude, gpt4
+variables:
+  - name: subject
+    description: The subject to analyze
+  - name: market_context
+    description: Market or competitive context
+    default: current market
+version: "1.0"
+created: 2026-06-19
+updated: 2026-06-19
+---
+Conduct a SWOT analysis of {{subject}} in the context of {{market_context}}.
+
+Strengths:
+- Internal capabilities and advantages
+- Unique resources or expertise
+
+Weaknesses:
+- Internal limitations or gaps
+- Areas needing improvement
+
+Opportunities:
+- External factors to leverage
+- Market trends and unmet needs
+
+Threats:
+- External risks and competition
+- Market or regulatory challenges

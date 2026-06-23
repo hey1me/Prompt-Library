@@ -1,0 +1,29 @@
+id: email-draft
+title: Email Draft Generator
+description: Draft professional emails for various contexts
+category: writing
+tags: [email, professional, communication]
+model_hint: claude
+variables:
+  - name: recipient_role
+    description: Recipient's role or title
+    default: hiring manager
+  - name: context
+    description: The email context or purpose
+  - name: tone
+    description: Email tone
+    default: professional
+version: "1.0"
+created: 2026-06-19
+updated: 2026-06-19
+---
+Draft a professional email to a {{recipient_role}} regarding {{context}}.
+
+Tone: {{tone}}
+
+Include:
+1. Clear subject line
+2. Appropriate greeting
+3. Concise body with key points
+4. Call to action or next steps
+5. Professional closing

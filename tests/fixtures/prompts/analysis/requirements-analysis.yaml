@@ -1,0 +1,27 @@
+id: requirements-analysis
+title: Requirements Analysis
+description: Analyze and refine product requirements
+category: analysis
+tags: [requirements, analysis, product, specification]
+model_hint: claude
+variables:
+  - name: requirement
+    description: The requirement or feature description to analyze
+  - name: domain
+    description: Domain or industry context
+    default: software
+version: "1.0"
+created: 2026-06-18
+updated: 2026-06-18
+---
+Analyze the following requirement for {{domain}}:
+
+{{requirement}}
+
+For each aspect, identify:
+1. Clarity — Is the requirement well-defined? What's ambiguous?
+2. Completeness — What's missing? Edge cases, error states?
+3. Consistency — Does it conflict with existing behavior?
+4. Feasibility — Technical and resource constraints
+5. Testability — How would you verify this requirement?
+6. Priority — Is this essential, nice-to-have, or future?

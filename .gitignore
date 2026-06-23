@@ -1,0 +1,21 @@
+.venv/
+
+# Internal working files (not for public)
+feature.md
+thoughts/
+
+# SQLite database
+*.db
+*.db-wal
+*.db-shm
+
+# Transaction ledger
+*.log
+
+# Test artifacts
+tests/fixtures/export/
+
+# Build artifacts
+prompt_library.egg-info/
+__pycache__/
+*.pyc

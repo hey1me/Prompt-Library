@@ -1,0 +1,29 @@
+id: api-design
+title: REST API Design Review
+description: Review and improve REST API endpoint design
+category: development
+tags: [api, rest, design, backend]
+model_hint: claude
+variables:
+  - name: endpoint
+    description: The API endpoint path
+    default: /api/v1/resource
+  - name: method
+    description: HTTP method
+    default: GET
+version: "1.0"
+created: 2026-06-18
+updated: 2026-06-18
+---
+Review the following REST API design:
+
+Endpoint: {{endpoint}}
+Method: {{method}}
+
+Evaluate:
+1. Resource naming — is it RESTful and consistent?
+2. Status codes — appropriate for success and error cases
+3. Request/response format — clear and complete
+4. Authentication and authorization
+5. Rate limiting and pagination
+6. Error handling and error response format
